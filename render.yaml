@@ -1,0 +1,33 @@
+# Render Blueprint: New > Blueprint > pick this repo. Values marked sync:false are asked for in the dashboard.
+services:
+  - type: web
+    name: haven-realty
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: mysql
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: AGENT_EMAIL
+        sync: false
+      - key: AGENT_PASSWORD
+        sync: false
+      - key: SEED_DEMO
+        value: "true"
+      - key: DEV_EXPOSE_OTP
+        value: "true"
+      - key: PUBLIC_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      # the free plan has 512 MB RAM: keep the JVM small
+      - key: JAVA_TOOL_OPTIONS
+        value: "-Xmx340m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m"
