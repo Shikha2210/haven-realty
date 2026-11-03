@@ -94,3 +94,7 @@ java -jar backend	arget\haven-realty.jar   # http://localhost:8080
 
 Put it behind HTTPS (e.g. Caddy/nginx or your host's TLS) and set `PUBLIC_URL`/`CORS_ORIGINS` to your domain. Back up the MySQL database and the uploads folder (`STORAGE_DIR`). Never deploy with `SEED_DEMO=true`.
 The single-jar run was verified locally in production mode (no demo data, codes hidden, agent from env vars, SPA routes served, API still locked). The Docker files and MySQL path are written but were not run here (no Docker/MySQL installed).
+
+### Databases supported
+H2 (local demo, default), **MySQL 8** (`SPRING_PROFILES_ACTIVE=mysql`) and PostgreSQL (`SPRING_PROFILES_ACTIVE=postgres`, `DB_URL=jdbc:postgresql://HOST:PORT/DB?sslmode=require`). Flyway picks the matching migration folder automatically. MySQL was verified against an Aiven MySQL service (migration, logins, search, images); the PostgreSQL migration is written but was not run against a live server.
+With `SEED_DEMO=true` on a fresh server, demo photos/documents missing from disk are recreated automatically at startup. Files uploaded by real users live in `STORAGE_DIR`; on hosts with an ephemeral disk (e.g. Render free) attach a persistent disk or they are lost on restart.

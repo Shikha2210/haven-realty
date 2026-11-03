@@ -67,6 +67,21 @@ public class FileStorageService {
         return new FileSystemResource(p);
     }
 
+    public boolean exists(String storedName) {
+        return Files.exists(root.resolve(storedName).normalize());
+    }
+
+    /** Used by the demo seeder to recreate demo files that the database already references. */
+    public void writeNamed(String storedName, byte[] data) {
+        Path p = root.resolve(storedName).normalize();
+        if (!p.startsWith(root)) throw new IllegalArgumentException("bad name");
+        try {
+            Files.write(p, data);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     /** Used by the demo seeder. */
     public Stored storeBytes(byte[] data, String ext, String type, String originalName) {
         String stored = UUID.randomUUID() + "." + ext;

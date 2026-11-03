@@ -296,7 +296,7 @@ public class PropertyService {
     public Page<AgentProperty> adminList(List<String> statuses, String q, int page, int size) {
         List<String> wanted = statuses == null || statuses.isEmpty()
                 ? List.of("DRAFT", "SUBMITTED", "UNDER_REVIEW", "PUBLISHED", "REJECTED", "SUSPENDED", "INACTIVE", "SOLD") : statuses;
-        String like = has(q) ? "%" + q.trim().toLowerCase() + "%" : null;
+        String like = has(q) ? "%" + q.trim().toLowerCase() + "%" : "%";
         return properties.adminSearch(wanted, like, PageRequest.of(page, size, Sort.by("id").descending())).map(this::agentView);
     }
 

@@ -28,6 +28,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
     List<Object[]> countByStatusGrouped();
 
     @Query("select p from Property p where p.status in :statuses and "
-            + "(:q is null or lower(p.title) like :q or lower(p.city) like :q or lower(p.address) like :q)")
+            + "(lower(p.title) like :q or lower(p.city) like :q or lower(p.address) like :q)")
     Page<Property> adminSearch(@Param("statuses") Collection<String> statuses, @Param("q") String q, Pageable pageable);
 }

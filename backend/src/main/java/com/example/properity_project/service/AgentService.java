@@ -47,9 +47,10 @@ public class AgentService {
     private final AuditService audit;
 
     public Page<AgentCustomer> customers(String q, String kind, int page, int size) {
-        String like = q == null || q.isBlank() ? null : "%" + q.trim().toLowerCase() + "%";
-        Boolean seller = "seller".equalsIgnoreCase(kind) ? Boolean.TRUE : null;
-        return users.searchCustomers(like, seller, PageRequest.of(page, size, Sort.by("id").descending())).map(this::customerView);
+        String like = q == null || q.isBlank() ? "%" : "%" + q.trim().toLowerCase() + "%";
+        PageRequest pr = PageRequest.of(page, size, Sort.by("id").descending());
+        var found = "seller".equalsIgnoreCase(kind) ? users.searchSellers(like, pr) : users.searchCustomers(like, pr);
+        return found.map(this::customerView);
     }
 
     public AgentCustomer customer(Long id) {

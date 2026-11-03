@@ -17,8 +17,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByRole(String role);
     long countByRoleAndSellerEnabledTrue(String role);
 
+    /** q is always a LIKE pattern ("%" when no search text) so no NULL binds are needed. */
     @Query("select u from User u where u.role = 'CUSTOMER' and "
-            + "(:q is null or lower(u.fullName) like :q or lower(u.email) like :q or u.phone like :q) and "
-            + "(:seller is null or u.sellerEnabled = :seller)")
-    Page<User> searchCustomers(@Param("q") String q, @Param("seller") Boolean seller, Pageable pageable);
+            + "(lower(u.fullName) like :q or lower(u.email) like :q or u.phone like :q)")
+    Page<User> searchCustomers(@Param("q") String q, Pageable pageable);
+
+    @Query("select u from User u where u.role = 'CUSTOMER' and u.sellerEnabled = true and "
+            + "(lower(u.fullName) like :q or lower(u.email) like :q or u.phone like :q)")
+    Page<User> searchSellers(@Param("q") String q, Pageable pageable);
 }

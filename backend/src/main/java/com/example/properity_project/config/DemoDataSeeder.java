@@ -47,7 +47,10 @@ public class DemoDataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (users.countByRole("CUSTOMER") > 0) return;
+        if (users.countByRole("CUSTOMER") > 0) {
+            repairMissingFiles();
+            return;
+        }
 
         if (users.countByRole("AGENT") == 0) {
             users.save(User.builder().fullName("Aarav Kapoor").email("agent@haven.test").password(encoder.encode("Agent@12345"))
@@ -86,6 +89,30 @@ public class DemoDataSeeder implements CommandLineRunner {
                 .message("Could we visit this Saturday morning?").status("NEW").build());
         wishlist.save(WishlistItem.builder().userId(b1.getId()).propertyId(p3.getId()).build());
         log.info("Demo data created. Sign in as priya@haven.test / Demo@12345 (buyer), meera@haven.test (seller), agent@haven.test / Agent@12345");
+    }
+
+    /**
+     * Demo rows live in the database but their files live on disk. On a fresh server (or a new disk) the files are
+     * missing, so recreate them with the same stored names.
+     */
+    private void repairMissingFiles() throws Exception {
+        int fixed = 0;
+        Color[] palette = {new Color(0x1f3a5f), new Color(0x2d5a7b), new Color(0x3b6e5b), new Color(0x6b5b3b), new Color(0x4a3f6b), new Color(0x7b3f3f)};
+        for (PropertyImage im : images.findAll()) {
+            if (storage.exists(im.getStoredName())) continue;
+            Property p = properties.findById(im.getPropertyId()).orElse(null);
+            if (p == null) continue;
+            Color c = palette[(int) (p.getId() % palette.length)];
+            storage.writeNamed(im.getStoredName(), render(p.getTitle(), p.getLocality() + ", " + p.getCity(), c, im.getSortOrder()));
+            fixed++;
+        }
+        for (PropertyDocument d : docs.findAll()) {
+            if (!storage.exists(d.getStoredName())) { storage.writeNamed(d.getStoredName(), "%PDF-1.4 demo ownership".getBytes()); fixed++; }
+        }
+        for (VerificationDocument d : verificationDocs.findAll()) {
+            if (!storage.exists(d.getStoredName())) { storage.writeNamed(d.getStoredName(), "%PDF-1.4 demo document".getBytes()); fixed++; }
+        }
+        if (fixed > 0) log.info("Recreated {} missing demo files", fixed);
     }
 
     private User customer(String name, String email, String phone, String city, boolean seller) {
