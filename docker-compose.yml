@@ -1,0 +1,36 @@
+# docker compose up -d --build     ->  http://localhost:8080
+# Copy .env.example to .env and set real values first.
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: haven_realty
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes: [dbdata:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}"]
+      interval: 10s
+      retries: 10
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8080:8080"]
+    environment:
+      DB_URL: jdbc:mysql://db:3306/haven_realty?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      AGENT_EMAIL: ${AGENT_EMAIL}
+      AGENT_PASSWORD: ${AGENT_PASSWORD}
+      CORS_ORIGINS: ${PUBLIC_URL:-http://localhost:8080}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    volumes: [uploads:/data]
+volumes:
+  dbdata:
+  uploads:

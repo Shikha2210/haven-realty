@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --color-navy-950: #0c1530;
+  --color-navy-900: #14213d;
+  --color-navy-800: #1d2f57;
+  --color-navy-700: #2a416f;
+  --color-navy-100: #e4e9f3;
+  --color-navy-50: #f1f4fa;
+  --color-gold-500: #b08d57;
+  --color-gold-600: #967443;
+  --color-gold-100: #f4ecdc;
+  --color-ink: #1b2233;
+  --color-muted: #667085;
+  --color-line: #e5e8ef;
+  --color-paper: #f7f8fb;
+}
+
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 3px solid var(--color-gold-500); outline-offset: 2px; }
+.font-display { font-family: var(--font-display); }
+.skeleton { background: linear-gradient(90deg, #eceff5 25%, #f6f7fa 37%, #eceff5 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+@keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
