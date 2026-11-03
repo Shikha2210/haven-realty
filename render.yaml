@@ -30,4 +30,4 @@ services:
         sync: false
       # the free plan has 512 MB RAM: keep the JVM small
       - key: JAVA_TOOL_OPTIONS
-        value: "-Xmx340m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m"
+        value: "-Xmx230m -Xss512k -XX:+UseSerialGC -XX:MaxMetaspaceSize=96m -XX:ReservedCodeCacheSize=40m -XX:TieredStopAtLevel=1 -XX:CICompilerCount=1"
