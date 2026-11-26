@@ -99,7 +99,7 @@ The single-jar run was verified locally in production mode (no demo data, codes 
 Live at **https://shikha2210.github.io/haven-realty/**. GitHub Pages only serves static files, so this build replaces the Spring Boot API with a JavaScript port in `frontend/src/demo/` that runs in the visitor's browser.
 
 - Data and uploads are stored in that browser only (IndexedDB). Visitors do not see each other's changes, and no email or SMS is sent.
-- Logins are the demo accounts above (the **Demo logins** button shows them and resets the data).
+- Logins are the demo accounts above (the **Demo logins** button shows them and resets the data). **Change agent login** in the same panel sets a different agent email and password for that browser only; resetting restores the default. Never build a private password into the site.
 - It is a demonstration, not a secure deployment: all rules run on the visitor's device.
 - The Java services remain the reference. A change to backend behaviour has to be repeated in `frontend/src/demo/server.js`.
 

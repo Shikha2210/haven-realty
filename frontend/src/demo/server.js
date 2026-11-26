@@ -317,6 +317,18 @@ route('POST', '/account/notifications/:id/read', 'any', ({ db, user, ids: [id] }
   return { message: 'ok' };
 });
 
+// Demo only: lets visitors choose the agent login for their own browser, so no private password is ever published.
+route('PUT', '/demo/agent-login', 'public', async ({ db, body: r }) => {
+  validate(r, { email: [required('Email is required'), matches(EMAIL, 'Enter a valid email')], password: [required('Password is required'), [(v) => v.length >= 8 && v.length <= 72, 'Use 8 to 72 characters']] });
+  const email = r.email.trim().toLowerCase();
+  strongEnough(r.password);
+  const agent = agentUser(db);
+  if (db.users.some((u) => u !== agent && u.email === email)) conflict('This email belongs to another account in the demo');
+  Object.assign(agent, { email, password: await hash(r.password) });
+  audit(db, agent.id, 'AGENT_LOGIN_CHANGED', 'User', agent.id);
+  return { message: 'Agent login changed in this browser' };
+});
+
 // ================================================================ routes: public catalogue
 route('GET', '/properties', 'public', ({ db, user, query: c }) => {
   const q = text(c.q).trim();
