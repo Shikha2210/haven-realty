@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { CheckCircle2, ChevronLeft, ChevronRight, Inbox, Loader2, TriangleAlert, X, ImageOff } from 'lucide-react';
-import api from '../api.js';
+import api, { DEMO } from '../api.js';
 
 /* ---------- formatting ---------- */
 export const inr = (v, category) =>
@@ -204,7 +204,12 @@ export function Placeholder({ className = '' }) {
   return <div className={`grid place-items-center bg-navy-50 text-navy-700/40 ${className}`}><ImageOff size={28} /></div>;
 }
 
-export function PublicImg({ src, alt, className = '' }) {
+export function PublicImg(props) {
+  // without a server there is no image URL to link to, so images are loaded through the API client
+  return DEMO ? <PrivateImg {...props} /> : <LinkedImg {...props} />;
+}
+
+function LinkedImg({ src, alt, className = '' }) {
   const [bad, setBad] = useState(false);
   if (!src || bad) return <Placeholder className={className} />;
   return <img src={`${import.meta.env.VITE_API_URL || ''}${src}`} alt={alt} loading="lazy" onError={() => setBad(true)} className={className} />;

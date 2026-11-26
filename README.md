@@ -95,6 +95,19 @@ java -jar backend	arget\haven-realty.jar   # http://localhost:8080
 Put it behind HTTPS (e.g. Caddy/nginx or your host's TLS) and set `PUBLIC_URL`/`CORS_ORIGINS` to your domain. Back up the MySQL database and the uploads folder (`STORAGE_DIR`). Never deploy with `SEED_DEMO=true`.
 The single-jar run was verified locally in production mode (no demo data, codes hidden, agent from env vars, SPA routes served, API still locked). The Docker files and MySQL path are written but were not run here (no Docker/MySQL installed).
 
+### GitHub Pages demo (no server)
+Live at **https://shikha2210.github.io/haven-realty/**. GitHub Pages only serves static files, so this build replaces the Spring Boot API with a JavaScript port in `frontend/src/demo/` that runs in the visitor's browser.
+
+- Data and uploads are stored in that browser only (IndexedDB). Visitors do not see each other's changes, and no email or SMS is sent.
+- Logins are the demo accounts above (the **Demo logins** button shows them and resets the data).
+- It is a demonstration, not a secure deployment: all rules run on the visitor's device.
+- The Java services remain the reference. A change to backend behaviour has to be repeated in `frontend/src/demo/server.js`.
+
+To publish a new version, run this in `frontend/`, then push the contents of `dist-pages/` to the `gh-pages` branch:
+```powershell
+npm run build:pages
+```
+
 ### Databases supported
 H2 (local demo, default), **MySQL 8** (`SPRING_PROFILES_ACTIVE=mysql`) and PostgreSQL (`SPRING_PROFILES_ACTIVE=postgres`, `DB_URL=jdbc:postgresql://HOST:PORT/DB?sslmode=require`). Flyway picks the matching migration folder automatically. MySQL was verified against an Aiven MySQL service (migration, logins, search, images); the PostgreSQL migration is written but was not run against a live server.
 With `SEED_DEMO=true` on a fresh server, demo photos/documents missing from disk are recreated automatically at startup. Files uploaded by real users live in `STORAGE_DIR`; on hosts with an ephemeral disk (e.g. Render free) attach a persistent disk or they are lost on restart.

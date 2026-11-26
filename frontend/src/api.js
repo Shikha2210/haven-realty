@@ -3,6 +3,10 @@ import axios from 'axios';
 // Same-origin in dev (Vite proxy) and in production behind a reverse proxy; override with VITE_API_URL.
 const api = axios.create({ baseURL: `${import.meta.env.VITE_API_URL || ''}/api` });
 
+// The static (GitHub Pages) build has no server, so requests are answered inside the browser.
+export const DEMO = import.meta.env.VITE_DEMO === 'true';
+if (DEMO) api.defaults.adapter = async (config) => (await import('./demo/server.js')).adapter(config);
+
 const TOKEN_KEY = 'haven_token';
 export const tokenStore = {
   get: () => { try { return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY); } catch { return null; } },

@@ -5,13 +5,16 @@ import App from './App.jsx';
 import { AuthProvider } from './auth.jsx';
 import { ToastProvider } from './components/ui.jsx';
 import './index.css';
+import { DEMO } from './api.js';
+import DemoBanner from './demo/DemoBanner.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ToastProvider>
         <AuthProvider>
           <App />
+          {DEMO && <DemoBanner />}
         </AuthProvider>
       </ToastProvider>
     </BrowserRouter>
